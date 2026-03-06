@@ -5,20 +5,24 @@ export const AI_DIFFICULTY_SETTINGS: Record<
   AIDifficulty,
   {
     label: string;
+    skillLevel: number;
     movetimeMs: number;
   }
 > = {
   easy: {
     label: "Easy",
-    movetimeMs: 100
+    skillLevel: 3,
+    movetimeMs: 300
   },
   medium: {
     label: "Medium",
-    movetimeMs: 500
+    skillLevel: 12,
+    movetimeMs: 800
   },
   hard: {
     label: "Hard",
-    movetimeMs: 1500
+    skillLevel: 20,
+    movetimeMs: 2000
   }
 };
 

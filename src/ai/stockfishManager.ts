@@ -90,11 +90,13 @@ export class StockfishManager {
       this.stopSearch("Search superseded by a new request.");
     }
 
+    const settings = AI_DIFFICULTY_SETTINGS[difficulty];
+    this.send(`setoption name Skill Level value ${settings.skillLevel}`);
     this.send(`position fen ${fen}`);
 
     return new Promise<string | null>((resolve, reject) => {
       this.pendingSearch = { resolve, reject };
-      this.send(`go movetime ${AI_DIFFICULTY_SETTINGS[difficulty].movetimeMs}`);
+      this.send(`go movetime ${settings.movetimeMs}`);
     });
   }
 
