@@ -7,7 +7,6 @@ interface ChessBoardProps {
   legalMoves: Move[];
   inCheck: boolean;
   interactionDisabled?: boolean;
-  overlayMessage?: string | null;
   perspective?: Color;
   onSquareClick: (square: number) => void;
   onPieceDragStart: (square: number) => void;
@@ -24,7 +23,6 @@ export function ChessBoard({
   legalMoves,
   inCheck,
   interactionDisabled = false,
-  overlayMessage = null,
   perspective = "w",
   onSquareClick,
   onPieceDragStart,
@@ -123,11 +121,6 @@ export function ChessBoard({
           );
         })}
       </div>
-      {overlayMessage ? (
-        <div className="board-overlay" role="status" aria-live="polite">
-          {overlayMessage}
-        </div>
-      ) : null}
     </div>
   );
 }

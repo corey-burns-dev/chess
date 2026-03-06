@@ -379,7 +379,6 @@ export default function App() {
   const isAiMode = gameMode === "ai";
   const isAiTurn = isAiMode && state.sideToMove === aiColor;
   const boardLocked = Boolean(promotionRequest || status.result || (isAiMode && isAiTurn) || aiThinking);
-  const boardOverlayMessage = isAiTurn ? (aiReady ? "AI thinking..." : "Loading AI...") : null;
 
   const whiteScore = materialScore(state.capturedPieces.b);
   const blackScore = materialScore(state.capturedPieces.w);
@@ -690,7 +689,6 @@ export default function App() {
             legalMoves={selectableMoves}
             inCheck={status.inCheck}
             interactionDisabled={boardLocked}
-            overlayMessage={boardOverlayMessage}
             perspective={isAiMode ? playerColor : "w"}
             onSquareClick={handleSquareClick}
             onPieceDragStart={handlePieceDragStart}
