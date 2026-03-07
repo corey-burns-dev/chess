@@ -2,3 +2,4 @@ node_modules/
 dist/
 .DS_Store
 *.local
+stockfish-18.0.5.tgz
