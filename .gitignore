@@ -3,3 +3,10 @@ dist/
 .DS_Store
 *.local
 stockfish-18.0.5.tgz
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
