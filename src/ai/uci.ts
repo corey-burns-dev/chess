@@ -26,6 +26,6 @@ export function parseUciMove(move: string): ParsedUciMove | null {
   return {
     from: algebraicToIndex(match[1]),
     to: algebraicToIndex(match[2]),
-    promotion: match[3] as PieceType | undefined
+    promotion: match[3] as PieceType | undefined,
   };
 }

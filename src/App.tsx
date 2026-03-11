@@ -6,7 +6,15 @@ import { MoveList } from "./components/MoveList";
 import { ChessGame, indexToAlgebraic } from "./engine/ChessGame";
 import type { GameMode, AIDifficulty } from "./ai/config";
 import type { StockfishManager } from "./ai/stockfishManager";
-import type { ChessState, Color, GameResult, GameStatus, Move, Piece, PieceType } from "./engine/types";
+import type {
+  ChessState,
+  Color,
+  GameResult,
+  GameStatus,
+  Move,
+  Piece,
+  PieceType,
+} from "./engine/types";
 import { PIECE_SYMBOLS, oppositeColor } from "./engine/board";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -104,7 +112,16 @@ interface PlayerBarProps {
   isThinking?: boolean;
 }
 
-function PlayerBar({ color, label, capturedByThis, advantage, isActiveTurn, isInCheck, isGameOver, isThinking = false }: PlayerBarProps) {
+function PlayerBar({
+  color,
+  label,
+  capturedByThis,
+  advantage,
+  isActiveTurn,
+  isInCheck,
+  isGameOver,
+  isThinking = false,
+}: PlayerBarProps) {
   const cls = [
     "player-bar",
     isActiveTurn && !isGameOver ? "player-bar--active" : "",
@@ -159,7 +176,7 @@ function AIControls({
   onModeChange,
   onPlayerColorChange,
   onDifficultyChange,
-  onReset
+  onReset,
 }: AIControlsProps) {
   const statusText =
     mode !== "ai"
@@ -217,23 +234,32 @@ function AIControls({
           <div className="control-group">
             <span className="control-label">Difficulty</span>
             <div className="segmented-control segmented-control--triple">
-              {(Object.entries(AI_DIFFICULTY_SETTINGS) as Array<[AIDifficulty, (typeof AI_DIFFICULTY_SETTINGS)[AIDifficulty]]>).map(
-                ([key, settings]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    className={`segment${difficulty === key ? " segment--active" : ""}`}
-                    onClick={() => onDifficultyChange(key)}
-                  >
-                    {settings.label}
-                  </button>
-                )
-              )}
+              {(
+                Object.entries(AI_DIFFICULTY_SETTINGS) as Array<
+                  [AIDifficulty, (typeof AI_DIFFICULTY_SETTINGS)[AIDifficulty]]
+                >
+              ).map(([key, settings]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`segment${difficulty === key ? " segment--active" : ""}`}
+                  onClick={() => onDifficultyChange(key)}
+                >
+                  {settings.label}
+                </button>
+              ))}
             </div>
           </div>
 
-          <div className={`engine-status${aiThinking ? " engine-status--thinking" : ""}`} role="status" aria-live="polite">
-            <span className={`engine-dot${aiThinking ? " engine-dot--thinking" : ""}`} aria-hidden="true" />
+          <div
+            className={`engine-status${aiThinking ? " engine-status--thinking" : ""}`}
+            role="status"
+            aria-live="polite"
+          >
+            <span
+              className={`engine-dot${aiThinking ? " engine-dot--thinking" : ""}`}
+              aria-hidden="true"
+            />
             <span>{statusText}</span>
           </div>
 
@@ -256,7 +282,13 @@ interface GameInfoProps {
   onReset: () => void;
 }
 
-function GameInfo({ state, status, claimDrawDisabled = false, onClaimDraw, onReset }: GameInfoProps) {
+function GameInfo({
+  state,
+  status,
+  claimDrawDisabled = false,
+  onClaimDraw,
+  onReset,
+}: GameInfoProps) {
   if (status.result) {
     return (
       <div className="card result-card">
@@ -296,8 +328,15 @@ function GameInfo({ state, status, claimDrawDisabled = false, onClaimDraw, onRes
       </div>
       {status.claimableDraws.length > 0 && (
         <div className="claim-draw-row">
-          <p className="result-reason">Draw available by claim: {formatClaimableDraws(status.claimableDraws)}</p>
-          <button type="button" className="btn btn-ghost" onClick={onClaimDraw} disabled={claimDrawDisabled}>
+          <p className="result-reason">
+            Draw available by claim: {formatClaimableDraws(status.claimableDraws)}
+          </p>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={onClaimDraw}
+            disabled={claimDrawDisabled}
+          >
             Claim draw
           </button>
         </div>
@@ -380,7 +419,9 @@ export default function App() {
   const aiColor = oppositeColor(playerColor);
   const isAiMode = gameMode === "ai";
   const isAiTurn = isAiMode && state.sideToMove === aiColor;
-  const boardLocked = Boolean(promotionRequest || status.result || (isAiMode && isAiTurn) || aiThinking);
+  const boardLocked = Boolean(
+    promotionRequest || status.result || (isAiMode && isAiTurn) || aiThinking,
+  );
 
   const whiteScore = materialScore(state.capturedPieces.b);
   const blackScore = materialScore(state.capturedPieces.w);
@@ -670,7 +711,9 @@ export default function App() {
       {/* Header */}
       <header className="app-header">
         <div className="brand">
-          <span className="brand-piece" aria-hidden="true">♟</span>
+          <span className="brand-piece" aria-hidden="true">
+            ♟
+          </span>
           <span className="brand-name">Chess</span>
         </div>
         <div className="header-status">{headerBadge}</div>

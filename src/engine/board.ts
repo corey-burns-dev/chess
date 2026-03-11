@@ -8,7 +8,7 @@ export const PIECE_LETTERS: Record<PieceType, string> = {
   b: "B",
   r: "R",
   q: "Q",
-  k: "K"
+  k: "K",
 };
 
 export const PIECE_SYMBOLS: Record<Color, Record<PieceType, string>> = {
@@ -18,7 +18,7 @@ export const PIECE_SYMBOLS: Record<Color, Record<PieceType, string>> = {
     b: "\u2657",
     r: "\u2656",
     q: "\u2655",
-    k: "\u2654"
+    k: "\u2654",
   },
   b: {
     p: "\u265F",
@@ -26,8 +26,8 @@ export const PIECE_SYMBOLS: Record<Color, Record<PieceType, string>> = {
     b: "\u265D",
     r: "\u265C",
     q: "\u265B",
-    k: "\u265A"
-  }
+    k: "\u265A",
+  },
 };
 
 export function createEmptyBoard(): Board {
@@ -39,7 +39,7 @@ export function createEmptyBoard(): Board {
 export function createCastlingRights(): CastlingRights {
   return {
     w: { kingside: true, queenside: true },
-    b: { kingside: true, queenside: true }
+    b: { kingside: true, queenside: true },
   };
 }
 
@@ -62,7 +62,7 @@ export function createInitialState(): ChessState {
     halfmoveClock: 0,
     fullmoveNumber: 1,
     capturedPieces: { w: [], b: [] },
-    lastMove: null
+    lastMove: null,
   };
 }
 
@@ -76,22 +76,22 @@ export function cloneState(state: ChessState): ChessState {
     sideToMove: state.sideToMove,
     castlingRights: {
       w: { ...state.castlingRights.w },
-      b: { ...state.castlingRights.b }
+      b: { ...state.castlingRights.b },
     },
     enPassantTarget: state.enPassantTarget,
     halfmoveClock: state.halfmoveClock,
     fullmoveNumber: state.fullmoveNumber,
     capturedPieces: {
       w: state.capturedPieces.w.map((piece) => ({ ...piece })),
-      b: state.capturedPieces.b.map((piece) => ({ ...piece }))
+      b: state.capturedPieces.b.map((piece) => ({ ...piece })),
     },
     lastMove: state.lastMove
       ? {
           ...state.lastMove,
           piece: { ...state.lastMove.piece },
-          captured: state.lastMove.captured ? { ...state.lastMove.captured } : undefined
+          captured: state.lastMove.captured ? { ...state.lastMove.captured } : undefined,
         }
-      : null
+      : null,
   };
 }
 

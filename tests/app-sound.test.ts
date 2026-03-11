@@ -25,7 +25,9 @@ class MockAudio {
 }
 
 function getSquareButton(container: HTMLElement, square: string): HTMLButtonElement {
-  const button = container.querySelector<HTMLButtonElement>(`button[aria-label^="Square ${square}"]`);
+  const button = container.querySelector<HTMLButtonElement>(
+    `button[aria-label^="Square ${square}"]`,
+  );
   if (!button) {
     throw new Error(`Missing square button for ${square}`);
   }

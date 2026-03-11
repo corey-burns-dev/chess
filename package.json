@@ -10,7 +10,8 @@
     "test": "vitest run",
     "lint": "oxlint",
     "format": "oxfmt",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint:fix": "oxlint --fix . && oxfmt"
   },
   "dependencies": {
     "react": "19.2.4",
@@ -21,14 +22,14 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
+    "husky": "^9.1.7",
     "jsdom": "^28.1.0",
+    "lint-staged": "^16.3.3",
+    "oxfmt": "^0.37.0",
+    "oxlint": "^1.53.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
-    "vitest": "^4.0.18",
-    "oxlint": "^1.52.0",
-    "oxfmt": "^0.37.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.3.3"
+    "vitest": "^4.0.18"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

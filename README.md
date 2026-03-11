@@ -46,12 +46,12 @@ Stockfish is loaded only when `Human vs AI` mode is enabled. The engine runs in 
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start dev server at `localhost:3000` |
-| `npm run build` | Type-check and produce a production build |
-| `npm run preview` | Serve the production build locally |
-| `npm test` | Run engine unit tests |
+| Command           | Description                               |
+| ----------------- | ----------------------------------------- |
+| `npm run dev`     | Start dev server at `localhost:3000`      |
+| `npm run build`   | Type-check and produce a production build |
+| `npm run preview` | Serve the production build locally        |
+| `npm test`        | Run engine unit tests                     |
 
 ## Project Structure
 

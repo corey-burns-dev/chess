@@ -9,7 +9,7 @@ import {
   indexToAlgebraic,
   isLightSquare,
   isOnBoard,
-  oppositeColor
+  oppositeColor,
 } from "./board";
 import type {
   Board,
@@ -22,7 +22,7 @@ import type {
   Move,
   MoveRecord,
   Piece,
-  PieceType
+  PieceType,
 } from "./types";
 
 const KNIGHT_DELTAS = [
@@ -33,7 +33,7 @@ const KNIGHT_DELTAS = [
   [1, -2],
   [1, 2],
   [2, -1],
-  [2, 1]
+  [2, 1],
 ] as const;
 
 const KING_DELTAS = [
@@ -44,21 +44,21 @@ const KING_DELTAS = [
   [0, 1],
   [1, -1],
   [1, 0],
-  [1, 1]
+  [1, 1],
 ] as const;
 
 const BISHOP_DIRECTIONS = [
   [-1, -1],
   [-1, 1],
   [1, -1],
-  [1, 1]
+  [1, 1],
 ] as const;
 
 const ROOK_DIRECTIONS = [
   [-1, 0],
   [1, 0],
   [0, -1],
-  [0, 1]
+  [0, 1],
 ] as const;
 
 const QUEEN_DIRECTIONS = [...BISHOP_DIRECTIONS, ...ROOK_DIRECTIONS] as const;
@@ -68,7 +68,7 @@ function cloneMove(move: Move): Move {
   return {
     ...move,
     piece: { ...move.piece },
-    captured: move.captured ? { ...move.captured } : undefined
+    captured: move.captured ? { ...move.captured } : undefined,
   };
 }
 
@@ -77,7 +77,7 @@ function cloneStatus(status: GameStatus): GameStatus {
     inCheck: status.inCheck,
     legalMoves: status.legalMoves.map((move) => cloneMove(move)),
     claimableDraws: [...status.claimableDraws],
-    result: status.result ? { ...status.result } : null
+    result: status.result ? { ...status.result } : null,
   };
 }
 
@@ -143,7 +143,7 @@ export class ChessGame {
     return this.history.map((entry) => ({
       move: cloneMove(entry.record.move),
       san: entry.record.san,
-      resultingFen: entry.record.resultingFen
+      resultingFen: entry.record.resultingFen,
     }));
   }
 
@@ -152,7 +152,9 @@ export class ChessGame {
   }
 
   getLegalMovesFrom(square: number): Move[] {
-    return this.status.legalMoves.filter((move) => move.from === square).map((move) => cloneMove(move));
+    return this.status.legalMoves
+      .filter((move) => move.from === square)
+      .map((move) => cloneMove(move));
   }
 
   getClaimableDraws(): DrawClaimReason[] {
@@ -176,7 +178,7 @@ export class ChessGame {
 
     this.status = {
       ...cloneStatus(this.status),
-      result: buildDrawResult(chosenReason)
+      result: buildDrawResult(chosenReason),
     };
     return true;
   }
@@ -222,7 +224,7 @@ export class ChessGame {
     const record: MoveRecord = {
       move: recordedMove,
       san,
-      resultingFen: this.toFen(nextState)
+      resultingFen: this.toFen(nextState),
     };
 
     this.state = nextState;
@@ -298,7 +300,12 @@ export class ChessGame {
 
   private getPositionKey(state: ChessState): string {
     const boardPart = this.toFen(state).split(" ").slice(0, 1)[0];
-    return [boardPart, state.sideToMove, this.castlingRightsToString(state), this.getEnPassantKey(state)].join(" ");
+    return [
+      boardPart,
+      state.sideToMove,
+      this.castlingRightsToString(state),
+      this.getEnPassantKey(state),
+    ].join(" ");
   }
 
   private getFenEnPassantTarget(state: ChessState): string {
@@ -323,7 +330,9 @@ export class ChessGame {
   private evaluateState(state: ChessState, positionCounts: Map<string, number>): GameStatus {
     const legalMoves = this.getLegalMovesForState(state);
     const kingSquare = this.findKingSquare(state.board, state.sideToMove);
-    const inCheck = kingSquare >= 0 && this.isSquareAttacked(state.board, kingSquare, oppositeColor(state.sideToMove));
+    const inCheck =
+      kingSquare >= 0 &&
+      this.isSquareAttacked(state.board, kingSquare, oppositeColor(state.sideToMove));
     const repetitionCount = positionCounts.get(this.getPositionKey(state)) ?? 0;
     const claimableDraws: DrawClaimReason[] = [];
     if (state.halfmoveClock >= 100) {
@@ -340,7 +349,7 @@ export class ChessGame {
         ? {
             winner: oppositeColor(state.sideToMove),
             reason: "checkmate",
-            message: `${oppositeColor(state.sideToMove) === "w" ? "White" : "Black"} wins by checkmate.`
+            message: `${oppositeColor(state.sideToMove) === "w" ? "White" : "Black"} wins by checkmate.`,
           }
         : buildDrawResult("stalemate");
     } else if (state.halfmoveClock >= 150) {
@@ -402,7 +411,12 @@ export class ChessGame {
     return false;
   }
 
-  private buildSan(beforeState: ChessState, move: Move, legalMovesBefore: Move[], nextStatus: GameStatus): string {
+  private buildSan(
+    beforeState: ChessState,
+    move: Move,
+    legalMovesBefore: Move[],
+    nextStatus: GameStatus,
+  ): string {
     let san = "";
 
     if (move.isCastling === "kingside") {
@@ -424,12 +438,16 @@ export class ChessGame {
             candidate.to === move.to &&
             candidate.from !== move.from &&
             candidate.piece.color === move.piece.color &&
-            candidate.piece.type === move.piece.type
+            candidate.piece.type === move.piece.type,
         );
 
         if (ambiguousMoves.length > 0) {
-          const sameFile = ambiguousMoves.some((candidate) => getFile(candidate.from) === getFile(move.from));
-          const sameRank = ambiguousMoves.some((candidate) => getRankIndex(candidate.from) === getRankIndex(move.from));
+          const sameFile = ambiguousMoves.some(
+            (candidate) => getFile(candidate.from) === getFile(move.from),
+          );
+          const sameRank = ambiguousMoves.some(
+            (candidate) => getRankIndex(candidate.from) === getRankIndex(move.from),
+          );
 
           if (!sameFile) {
             san += indexToAlgebraic(move.from)[0];
@@ -514,7 +532,7 @@ export class ChessGame {
             from: square,
             to: twoStep,
             piece: { ...piece },
-            isDoublePawnPush: true
+            isDoublePawnPush: true,
           });
         }
       }
@@ -536,7 +554,7 @@ export class ChessGame {
                 to: targetSquare,
                 piece: { ...piece },
                 captured: { ...occupant },
-                promotion
+                promotion,
               });
             }
           } else {
@@ -544,7 +562,7 @@ export class ChessGame {
               from: square,
               to: targetSquare,
               piece: { ...piece },
-              captured: { ...occupant }
+              captured: { ...occupant },
             });
           }
           continue;
@@ -559,7 +577,7 @@ export class ChessGame {
               to: targetSquare,
               piece: { ...piece },
               captured: { ...capturedPawn },
-              isEnPassant: true
+              isEnPassant: true,
             });
           }
         }
@@ -583,7 +601,7 @@ export class ChessGame {
             from: square,
             to: target,
             piece: { ...piece },
-            captured: occupant ? { ...occupant } : undefined
+            captured: occupant ? { ...occupant } : undefined,
           });
         }
       }
@@ -591,7 +609,12 @@ export class ChessGame {
     }
 
     if (piece.type === "b" || piece.type === "r" || piece.type === "q") {
-      const directions = piece.type === "b" ? BISHOP_DIRECTIONS : piece.type === "r" ? ROOK_DIRECTIONS : QUEEN_DIRECTIONS;
+      const directions =
+        piece.type === "b"
+          ? BISHOP_DIRECTIONS
+          : piece.type === "r"
+            ? ROOK_DIRECTIONS
+            : QUEEN_DIRECTIONS;
       for (const [rowDelta, colDelta] of directions) {
         let targetRow = row + rowDelta;
         let targetCol = col + colDelta;
@@ -607,7 +630,7 @@ export class ChessGame {
                 from: square,
                 to: target,
                 piece: { ...piece },
-                captured: { ...occupant }
+                captured: { ...occupant },
               });
             }
             break;
@@ -635,13 +658,14 @@ export class ChessGame {
             from: square,
             to: target,
             piece: { ...piece },
-            captured: occupant ? { ...occupant } : undefined
+            captured: occupant ? { ...occupant } : undefined,
           });
         }
       }
 
       const homeSquare = piece.color === "w" ? 60 : 4;
-      const rookSquares = piece.color === "w" ? { kingside: 63, queenside: 56 } : { kingside: 7, queenside: 0 };
+      const rookSquares =
+        piece.color === "w" ? { kingside: 63, queenside: 56 } : { kingside: 7, queenside: 0 };
       const enemyColor = oppositeColor(piece.color);
 
       // Castling must be generated explicitly because the king may not start in,
@@ -665,7 +689,7 @@ export class ChessGame {
             from: square,
             to: square + 2,
             piece: { ...piece },
-            isCastling: "kingside"
+            isCastling: "kingside",
           });
         }
       }
@@ -689,7 +713,7 @@ export class ChessGame {
             from: square,
             to: square - 2,
             piece: { ...piece },
-            isCastling: "queenside"
+            isCastling: "queenside",
           });
         }
       }
@@ -712,7 +736,9 @@ export class ChessGame {
     if (move.isEnPassant) {
       const forward = move.piece.color === "w" ? -8 : 8;
       capturedSquare = move.to - forward;
-      capturedPiece = nextState.board[capturedSquare] ? { ...(nextState.board[capturedSquare] as Piece) } : capturedPiece;
+      capturedPiece = nextState.board[capturedSquare]
+        ? { ...(nextState.board[capturedSquare] as Piece) }
+        : capturedPiece;
       nextState.board[capturedSquare] = null;
     }
 

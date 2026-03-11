@@ -40,14 +40,20 @@ export class StockfishManager {
     this.startupMessages = [];
     this.readyPromise = new Promise<void>((resolve, reject) => {
       const readyTimeout = window.setTimeout(() => {
-        const details = this.startupMessages.length > 0 ? ` Last output: ${this.startupMessages.join(" | ")}` : "";
+        const details =
+          this.startupMessages.length > 0
+            ? ` Last output: ${this.startupMessages.join(" | ")}`
+            : "";
         const error = new Error(`Stockfish did not finish loading.${details}`);
         this.failOutstanding(error);
         reject(error);
       }, READY_TIMEOUT_MS);
 
       const handleWorkerError = (event: ErrorEvent) => {
-        const details = this.startupMessages.length > 0 ? ` Last output: ${this.startupMessages.join(" | ")}` : "";
+        const details =
+          this.startupMessages.length > 0
+            ? ` Last output: ${this.startupMessages.join(" | ")}`
+            : "";
         const error = new Error(`${event.message || "Stockfish worker failed."}${details}`);
         window.clearTimeout(readyTimeout);
         this.failOutstanding(error);
@@ -65,7 +71,7 @@ export class StockfishManager {
         reject: (reason) => {
           window.clearTimeout(readyTimeout);
           reject(reason);
-        }
+        },
       });
 
       this.send("uci");

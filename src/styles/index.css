@@ -3,21 +3,21 @@
   color-scheme: dark;
 
   /* Surfaces */
-  --bg:        #0c0d12;
+  --bg: #0c0d12;
   --surface-1: #13141d;
   --surface-2: #191a25;
   --surface-3: #20212f;
   --surface-4: #282938;
 
   /* Borders */
-  --border-dim:    rgba(255, 255, 255, 0.05);
-  --border-soft:   rgba(255, 255, 255, 0.08);
+  --border-dim: rgba(255, 255, 255, 0.05);
+  --border-soft: rgba(255, 255, 255, 0.08);
   --border-medium: rgba(255, 255, 255, 0.13);
 
   /* Accent — warm amber */
-  --amber:      #c4893c;
-  --amber-hi:   #d9a055;
-  --amber-dim:  rgba(196, 137, 60, 0.13);
+  --amber: #c4893c;
+  --amber-hi: #d9a055;
+  --amber-dim: rgba(196, 137, 60, 0.13);
   --amber-glow: rgba(196, 137, 60, 0.22);
 
   /* Text */
@@ -26,24 +26,31 @@
   --text-3: #55556e;
 
   /* Danger */
-  --danger:     #e53e3e;
+  --danger: #e53e3e;
   --danger-dim: rgba(229, 62, 62, 0.12);
-  --danger-hi:  #fc8181;
+  --danger-hi: #fc8181;
 
   /* Board */
-  --sq-light:   #f0d9b5;
-  --sq-dark:    #b58863;
+  --sq-light: #f0d9b5;
+  --sq-dark: #b58863;
   --sq-selected-overlay: rgba(20, 155, 35, 0.38);
-  --sq-lastmove:         rgba(205, 210, 80, 0.42);
-  --sq-legal-dot:        rgba(0, 0, 0, 0.26);
-  --sq-capture-ring:     rgba(0, 0, 0, 0.24);
+  --sq-lastmove: rgba(205, 210, 80, 0.42);
+  --sq-legal-dot: rgba(0, 0, 0, 0.26);
+  --sq-capture-ring: rgba(0, 0, 0, 0.24);
 
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.5;
 }
 
 /* ─── Reset ────────────────────────────────────────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -180,7 +187,11 @@ button {
   padding: 8px 16px;
   font-size: 0.85rem;
   font-weight: 500;
-  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease, opacity 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 80ms ease,
+    opacity 120ms ease;
   white-space: nowrap;
 }
 
@@ -329,8 +340,13 @@ button {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.45; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
 }
 
 /* ─── Board Shell & Board ───────────────────────────────────────────────────── */
@@ -375,8 +391,12 @@ button {
   transition: filter 80ms ease;
 }
 
-.square.light { background: var(--sq-light); }
-.square.dark  { background: var(--sq-dark); }
+.square.light {
+  background: var(--sq-light);
+}
+.square.dark {
+  background: var(--sq-dark);
+}
 
 /* Hover brightening (skip selected to avoid double-effect) */
 .square:not(.selected):hover {
@@ -421,11 +441,21 @@ button {
 
 /* Check highlight — radial glow on king */
 .square.light.in-check {
-  background: radial-gradient(circle at center, rgba(220, 38, 38, 0.9) 0%, rgba(220, 38, 38, 0.5) 40%, var(--sq-light) 80%);
+  background: radial-gradient(
+    circle at center,
+    rgba(220, 38, 38, 0.9) 0%,
+    rgba(220, 38, 38, 0.5) 40%,
+    var(--sq-light) 80%
+  );
 }
 
 .square.dark.in-check {
-  background: radial-gradient(circle at center, rgba(220, 38, 38, 0.9) 0%, rgba(220, 38, 38, 0.5) 40%, var(--sq-dark) 80%);
+  background: radial-gradient(
+    circle at center,
+    rgba(220, 38, 38, 0.9) 0%,
+    rgba(220, 38, 38, 0.5) 40%,
+    var(--sq-dark) 80%
+  );
 }
 
 /* ─── Coordinates ───────────────────────────────────────────────────────────── */
@@ -441,8 +471,14 @@ button {
   letter-spacing: 0;
 }
 
-.rank-label { top: 4px;    left: 5px; }
-.file-label { bottom: 4px; right: 5px; }
+.rank-label {
+  top: 4px;
+  left: 5px;
+}
+.file-label {
+  bottom: 4px;
+  right: 5px;
+}
 
 .square.light .rank-label,
 .square.light .file-label {
@@ -675,7 +711,10 @@ button {
   color: var(--text-1);
   font-size: 0.78rem;
   font-weight: 600;
-  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 80ms ease;
 }
 
 .segment:hover {
@@ -871,7 +910,9 @@ button {
   border: 1px solid var(--border-medium);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .modal-title {
@@ -904,7 +945,10 @@ button {
   background: var(--surface-3);
   border: 1px solid var(--border-soft);
   border-radius: 10px;
-  transition: background 120ms ease, border-color 120ms ease, transform 100ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    transform 100ms ease;
 }
 
 .promotion-option:hover {

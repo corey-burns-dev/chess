@@ -8,7 +8,7 @@ function piece(color: Color, type: PieceType): Piece {
 
 function createState(
   placements: Record<string, Piece>,
-  overrides: Partial<ChessState> = {}
+  overrides: Partial<ChessState> = {},
 ): ChessState {
   const board = createEmptyBoard();
 
@@ -21,14 +21,14 @@ function createState(
     sideToMove: "w",
     castlingRights: {
       w: { kingside: false, queenside: false },
-      b: { kingside: false, queenside: false }
+      b: { kingside: false, queenside: false },
     },
     enPassantTarget: null,
     halfmoveClock: 0,
     fullmoveNumber: 1,
     capturedPieces: { w: [], b: [] },
     lastMove: null,
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -52,12 +52,15 @@ describe("ChessGame engine", () => {
 
   it("blocks moves that leave the king in check", () => {
     const game = new ChessGame(
-      createState({
-        e1: piece("w", "k"),
-        e2: piece("w", "r"),
-        e8: piece("b", "r"),
-        a8: piece("b", "k")
-      }, { sideToMove: "w" })
+      createState(
+        {
+          e1: piece("w", "k"),
+          e2: piece("w", "r"),
+          e8: piece("b", "r"),
+          a8: piece("b", "k"),
+        },
+        { sideToMove: "w" },
+      ),
     );
 
     expect(game.moveByAlgebraic("e2", "d2")).toBe(false);
@@ -71,16 +74,16 @@ describe("ChessGame engine", () => {
           e1: piece("w", "k"),
           h1: piece("w", "r"),
           e8: piece("b", "k"),
-          a8: piece("b", "r")
+          a8: piece("b", "r"),
         },
         {
           sideToMove: "w",
           castlingRights: {
             w: { kingside: true, queenside: false },
-            b: { kingside: false, queenside: true }
-          }
-        }
-      )
+            b: { kingside: false, queenside: true },
+          },
+        },
+      ),
     );
 
     expect(game.moveByAlgebraic("e1", "g1")).toBe(true);
@@ -99,15 +102,15 @@ describe("ChessGame engine", () => {
           e1: piece("w", "k"),
           h1: piece("w", "r"),
           e8: piece("b", "r"),
-          a8: piece("b", "k")
+          a8: piece("b", "k"),
         },
         {
           castlingRights: {
             w: { kingside: true, queenside: false },
-            b: { kingside: false, queenside: false }
-          }
-        }
-      )
+            b: { kingside: false, queenside: false },
+          },
+        },
+      ),
     );
 
     expect(inCheckGame.moveByAlgebraic("e1", "g1")).toBe(false);
@@ -118,15 +121,15 @@ describe("ChessGame engine", () => {
           e1: piece("w", "k"),
           h1: piece("w", "r"),
           c4: piece("b", "b"),
-          a8: piece("b", "k")
+          a8: piece("b", "k"),
         },
         {
           castlingRights: {
             w: { kingside: true, queenside: false },
-            b: { kingside: false, queenside: false }
-          }
-        }
-      )
+            b: { kingside: false, queenside: false },
+          },
+        },
+      ),
     );
 
     expect(throughCheckGame.moveByAlgebraic("e1", "g1")).toBe(false);
@@ -157,11 +160,13 @@ describe("ChessGame engine", () => {
       createState({
         e1: piece("w", "k"),
         h8: piece("b", "k"),
-        g7: piece("w", "p")
-      })
+        g7: piece("w", "p"),
+      }),
     );
 
-    const promotionMoves = game.getLegalMovesFrom(algebraicToIndex("g7")).filter((move) => move.to === algebraicToIndex("g8"));
+    const promotionMoves = game
+      .getLegalMovesFrom(algebraicToIndex("g7"))
+      .filter((move) => move.to === algebraicToIndex("g8"));
     expect(promotionMoves).toHaveLength(4);
     expect(game.moveByAlgebraic("g7", "g8", "n")).toBe(true);
     expect(game.getPiece(algebraicToIndex("g8"))).toEqual(piece("w", "n"));
@@ -182,11 +187,14 @@ describe("ChessGame engine", () => {
 
   it("detects stalemate", () => {
     const game = new ChessGame(
-      createState({
-        h8: piece("b", "k"),
-        f7: piece("w", "k"),
-        g6: piece("w", "q")
-      }, { sideToMove: "b" })
+      createState(
+        {
+          h8: piece("b", "k"),
+          f7: piece("w", "k"),
+          g6: piece("w", "q"),
+        },
+        { sideToMove: "b" },
+      ),
     );
 
     const status = game.getStatus();
@@ -204,7 +212,7 @@ describe("ChessGame engine", () => {
       ["g1", "f3"],
       ["g8", "f6"],
       ["f3", "g1"],
-      ["f6", "g8"]
+      ["f6", "g8"],
     ];
 
     for (const [from, to] of sequence) {
@@ -227,7 +235,7 @@ describe("ChessGame engine", () => {
       ["g1", "f3"],
       ["g8", "f6"],
       ["f3", "g1"],
-      ["f6", "g8"]
+      ["f6", "g8"],
     ];
 
     for (const [from, to] of sequence) {
@@ -245,13 +253,13 @@ describe("ChessGame engine", () => {
         {
           e1: piece("w", "k"),
           e8: piece("b", "k"),
-          a1: piece("w", "r")
+          a1: piece("w", "r"),
         },
         {
           halfmoveClock: 99,
-          sideToMove: "w"
-        }
-      )
+          sideToMove: "w",
+        },
+      ),
     );
 
     expect(game.moveByAlgebraic("a1", "a2")).toBe(true);
@@ -268,7 +276,7 @@ describe("ChessGame engine", () => {
       ["g1", "f3"],
       ["g8", "f6"],
       ["f3", "g1"],
-      ["f6", "g8"]
+      ["f6", "g8"],
     ];
 
     for (let i = 0; i < 4; i += 1) {
@@ -286,13 +294,13 @@ describe("ChessGame engine", () => {
         {
           e1: piece("w", "k"),
           e8: piece("b", "k"),
-          a1: piece("w", "r")
+          a1: piece("w", "r"),
         },
         {
           halfmoveClock: 149,
-          sideToMove: "w"
-        }
-      )
+          sideToMove: "w",
+        },
+      ),
     );
 
     expect(game.moveByAlgebraic("a1", "a2")).toBe(true);
@@ -303,8 +311,8 @@ describe("ChessGame engine", () => {
     const game = new ChessGame(
       createState({
         e1: piece("w", "k"),
-        e8: piece("b", "k")
-      })
+        e8: piece("b", "k"),
+      }),
     );
 
     expect(game.getStatus().result?.reason).toBe("insufficient-material");
@@ -315,6 +323,8 @@ describe("ChessGame engine", () => {
 
     expect(game.moveByAlgebraic("a2", "a4")).toBe(true);
     expect(game.toFen()).toBe("rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq a3 0 1");
-    expect(game.getMoveHistory()[0]?.resultingFen).toBe("rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq a3 0 1");
+    expect(game.getMoveHistory()[0]?.resultingFen).toBe(
+      "rnbqkbnr/pppppppp/8/8/P7/8/1PPPPPPP/RNBQKBNR b KQkq a3 0 1",
+    );
   });
 });
