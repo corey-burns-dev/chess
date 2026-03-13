@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, multiplayer]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  backend:
+    name: Backend CI
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore backend/Backend.csproj /p:AllowMissingPrunePackageData=true
+
+      - name: Build
+        run: dotnet build backend/Backend.csproj --no-restore /p:AllowMissingPrunePackageData=true
+
+  frontend:
+    name: Frontend CI
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: cd frontend && bun install
+
+      - name: Lint
+        run: cd frontend && bun run lint
+
+      - name: Build
+        run: cd frontend && bun run build
+
+      - name: Test
+        run: cd frontend && bun run test
