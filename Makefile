@@ -37,10 +37,10 @@ ps:
 
 # Build and push production images from this PC to GHCR
 push-images:
-	docker build --target production -t ghcr.io/corey-burns-dev/chess-frontend:latest ./frontend
-	docker build --target production -t ghcr.io/corey-burns-dev/chess-backend:latest ./backend
-	docker push ghcr.io/corey-burns-dev/chess-frontend:latest
-	docker push ghcr.io/corey-burns-dev/chess-backend:latest
+	docker build --target production -t ghcr.io/burnsco/chess-frontend:latest ./frontend
+	docker build --target production -t ghcr.io/burnsco/chess-backend:latest ./backend
+	docker push ghcr.io/burnsco/chess-frontend:latest
+	docker push ghcr.io/burnsco/chess-backend:latest
 
 clean:
 	docker compose -f docker-compose.dev.yml down -v --rmi local --remove-orphans || true

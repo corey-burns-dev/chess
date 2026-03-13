@@ -35,7 +35,7 @@ const MOVE_SOUND_SRC = "/sounds/chess-move.mp3";
 const BACKEND_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:5000"
-    : "https://chess-api.coreyburns.ca";
+    : "";
 
 const PIECE_VALUES: Record<PieceType, number> = {
   p: 1,
