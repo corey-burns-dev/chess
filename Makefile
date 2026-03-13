@@ -35,6 +35,13 @@ logs:
 ps:
 	docker compose ps
 
+# Build and push production images from this PC to GHCR
+push-images:
+	docker build --target production -t ghcr.io/corey-burns-dev/chess-frontend:latest ./frontend
+	docker build --target production -t ghcr.io/corey-burns-dev/chess-backend:latest ./backend
+	docker push ghcr.io/corey-burns-dev/chess-frontend:latest
+	docker push ghcr.io/corey-burns-dev/chess-backend:latest
+
 clean:
 	docker compose -f docker-compose.dev.yml down -v --rmi local --remove-orphans || true
 	docker compose down -v --rmi local --remove-orphans || true
