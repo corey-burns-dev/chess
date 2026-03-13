@@ -74,8 +74,8 @@ public class GameHub : Hub
         var move = ParseMove(moveStr, playerColor);
         if (move == null) return;
 
-        var moveType = session.Game.IsValidMove(move);
-        if (moveType == MoveType.Invalid) return;
+        var isValid = session.Game.IsValidMove(move);
+        if (!isValid) return;
 
         // Apply move on server
         session.Game.MakeMove(move, true);
