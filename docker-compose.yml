@@ -2,7 +2,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      target: production
     ports:
       - "3000:80"
     depends_on:
@@ -11,9 +11,9 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      target: production
     ports:
       - "5000:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080

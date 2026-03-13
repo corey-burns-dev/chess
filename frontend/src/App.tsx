@@ -486,13 +486,48 @@ export default function App() {
         </span>
       );
     }
+
+    if (isMultiplayerMode && !multiplayerId) {
+      return (
+        <span className="badge badge-turn">
+          {searchingMatch ? "Searching for opponent..." : "Waiting to find game"}
+        </span>
+      );
+    }
+
+    const sideText = state.sideToMove === "w" ? "White's Turn" : "Black's Turn";
+    const isYou =
+      isMultiplayerMode || isAiMode
+        ? state.sideToMove === playerColor
+          ? " (You)"
+          : " (Opponent)"
+        : "";
+
     return (
-      <span className={`badge badge-turn${status.inCheck ? " badge-check" : ""}`}>
-        <span className={`pip pip-${state.sideToMove}`} aria-hidden="true" />
-        {colorName(state.sideToMove)} to move{status.inCheck ? " · Check!" : ""}
+      <span
+        className={`badge badge-turn${status.inCheck ? " badge-check" : ""}`}
+        style={{ fontSize: "1rem", padding: "8px 20px" }}
+      >
+        <span
+          className={`pip pip-${state.sideToMove}`}
+          aria-hidden="true"
+          style={{ width: "12px", height: "12px" }}
+        />
+        {sideText}
+        {isYou}
+        {status.inCheck ? " · CHECK!" : ""}
       </span>
     );
-  }, [state.sideToMove, status.inCheck, status.result]);
+  }, [
+    state.sideToMove,
+    status.inCheck,
+    status.result,
+    isMultiplayerMode,
+    multiplayerId,
+    searchingMatch,
+    isAiMode,
+    playerColor,
+  ]);
 
   const refresh = () => setVersion((v) => v + 1);
 
