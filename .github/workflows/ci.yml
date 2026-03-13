@@ -18,14 +18,17 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore backend/Backend.csproj /p:AllowMissingPrunePackageData=true
+        run: dotnet restore chess.sln
 
       - name: Build
-        run: dotnet build backend/Backend.csproj --no-restore /p:AllowMissingPrunePackageData=true
+        run: dotnet build chess.sln --no-restore
 
+      - name: Test
+        run: dotnet test Backend.Tests/Backend.Tests.csproj --no-build
+        
   frontend:
     name: Frontend CI
     runs-on: self-hosted
