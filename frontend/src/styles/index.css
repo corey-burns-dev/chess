@@ -409,7 +409,7 @@ button {
 
 /* Hover brightening (skip selected to avoid double-effect) */
 .square:not(.selected):hover {
-  filter: brightness(1.09);
+  filter: brightness(1.12);
 }
 
 .square:disabled {
@@ -517,7 +517,7 @@ button {
 }
 
 .piece[draggable="true"]:hover {
-  transform: scale(1.1);
+  /* No scale, just provide feedback via cursor */
 }
 
 .piece[draggable="true"] {

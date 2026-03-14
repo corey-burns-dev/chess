@@ -678,12 +678,15 @@ export class ChessGame {
       ) {
         const rook = state.board[rookSquares.kingside];
         const path = [square + 1, square + 2];
+        const tempBoard = [...state.board];
+        tempBoard[square] = null; // King is moving, so it shouldn't block attacks on the path
+
         if (
           rook &&
           rook.color === piece.color &&
           rook.type === "r" &&
           path.every((target) => !state.board[target]) &&
-          path.every((target) => !this.isSquareAttacked(state.board, target, enemyColor))
+          path.every((target) => !this.isSquareAttacked(tempBoard, target, enemyColor))
         ) {
           moves.push({
             from: square,
@@ -702,12 +705,15 @@ export class ChessGame {
         const rook = state.board[rookSquares.queenside];
         const emptySquares = [square - 1, square - 2, square - 3];
         const kingPath = [square - 1, square - 2];
+        const tempBoard = [...state.board];
+        tempBoard[square] = null; // King is moving, so it shouldn't block attacks on the path
+
         if (
           rook &&
           rook.color === piece.color &&
           rook.type === "r" &&
           emptySquares.every((target) => !state.board[target]) &&
-          kingPath.every((target) => !this.isSquareAttacked(state.board, target, enemyColor))
+          kingPath.every((target) => !this.isSquareAttacked(tempBoard, target, enemyColor))
         ) {
           moves.push({
             from: square,

@@ -1,6 +1,18 @@
 {
   "name": "local-chess",
   "version": "0.1.0",
+  "description": "A high-performance browser-based chess engine and UI built with Vite, React, and TypeScript. Features local multiplayer and Stockfish-powered AI.",
+  "keywords": [
+    "chess",
+    "react",
+    "typescript",
+    "vite",
+    "stockfish",
+    "ai",
+    "browser-game",
+    "local-multiplayer"
+  ],
+  "author": "cburns",
   "private": true,
   "type": "module",
   "scripts": {

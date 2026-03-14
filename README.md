@@ -1,31 +1,63 @@
-# Chess
+# ♟️ React Chess | Play Online with Stockfish AI
 
-A browser chess game built with Vite, React, and TypeScript. It supports local pass-and-play plus an optional Stockfish-powered AI opponent.
+A high-performance, browser-based chess game built with modern web technologies: **Vite**, **React**, and **TypeScript**. 
 
-## Highlights
+Play a seamless game of chess with a friend locally or challenge the powerful **Stockfish-powered AI** (web worker). This project features a robust rules engine that handles move generation, legal move validation, special moves (castling, en passant), and draw rules.
 
-- Full rules engine written in TypeScript
-- Legal move generation, check logic, promotion, and draw rules
-- Click and drag interaction with move history and captured pieces
-- Human vs AI mode backed by a lazily loaded Stockfish worker
+## 🚀 Highlights
 
-## Stack
+- **Full Rules Engine**: Custom-built in TypeScript, ensuring accurate gameplay.
+- **Stockfish AI Integration**: Play against a world-class AI engine running directly in your browser using Web Workers.
+- **Interactive UI**: Smooth click-and-drag interactions, move history, and captured pieces tracking.
+- **Modern Tech Stack**: Leverages React 19, Vite 7, and TypeScript for a fast, responsive experience.
+- **SignalR Support**: Prepared for real-time multiplayer with integrated SignalR (backend included).
 
-- React
-- TypeScript
-- Vite
-- Stockfish
+## 🛠️ Tech Stack
 
-## Quick start
+- **Frontend**: [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
+- **AI Engine**: [Stockfish](https://stockfishchess.org/) (via Web Worker)
+- **Backend**: .NET 9 with [SignalR](https://learn.microsoft.com/en-us/aspnet/core/signalr/introduction) (optional for multiplayer)
+- **Tooling**: Oxlint, Oxfmt, Vitest
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Bun](https://bun.sh/) (optional, recommended for fast package management)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/cburns/chess.git
+   cd chess/frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   bun install
+   # or
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   bun run dev
+   ```
+
+### Running Tests
 
 ```bash
-npm install
-npm run dev
+bun test
 ```
 
-Tests and build:
+### Building for Production
 
 ```bash
-npm test
-npm run build
+bun run build
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License.
