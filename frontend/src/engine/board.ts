@@ -13,12 +13,12 @@ export const PIECE_LETTERS: Record<PieceType, string> = {
 
 export const PIECE_SYMBOLS: Record<Color, Record<PieceType, string>> = {
   w: {
-    p: "\u2659",
-    n: "\u2658",
-    b: "\u2657",
-    r: "\u2656",
-    q: "\u2655",
-    k: "\u2654",
+    p: "\u265F",
+    n: "\u265E",
+    b: "\u265D",
+    r: "\u265C",
+    q: "\u265B",
+    k: "\u265A",
   },
   b: {
     p: "\u265F",

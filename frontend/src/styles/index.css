@@ -508,7 +508,7 @@ button {
   justify-content: center;
   position: relative;
   z-index: 2;
-  font-size: clamp(2.2rem, 11vw, 4.4rem);
+  font-size: clamp(2.1rem, 10.5vw, 4.2rem);
   line-height: 1;
   user-select: none;
   transition: transform 80ms ease;
@@ -525,19 +525,19 @@ button {
 }
 
 .white-piece {
-  color: #fff8f0;
+  color: #ffffff;
   text-shadow:
-    0 0 1px rgba(0, 0, 0, 0.6),
-    0 1px 2px rgba(0, 0, 0, 0.5),
-    0 3px 8px rgba(0, 0, 0, 0.35);
+    0 0 1px #000,
+    0 1px 2px rgba(0, 0, 0, 0.6),
+    0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .black-piece {
   color: #12121a;
   text-shadow:
     0 0 2px rgba(0, 0, 0, 0.4),
-    0 1px 3px rgba(255, 255, 255, 0.08),
-    0 3px 8px rgba(0, 0, 0, 0.25);
+    0 1px 3px rgba(255, 255, 255, 0.1),
+    0 3px 6px rgba(0, 0, 0, 0.3);
 }
 
 /* ─── Legal Move Indicators ─────────────────────────────────────────────────── */
