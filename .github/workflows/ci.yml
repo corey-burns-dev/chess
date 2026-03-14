@@ -21,10 +21,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore chess.sln
+        run: dotnet restore chess.slnx
 
       - name: Build
-        run: dotnet build chess.sln --no-restore
+        run: dotnet build chess.slnx --no-restore
 
       - name: Test
         run: dotnet test Backend.Tests/Backend.Tests.csproj --no-build
