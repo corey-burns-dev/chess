@@ -1,6 +1,10 @@
 # --- Build/Dev Base ---
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS base
 WORKDIR /app
+
+# Install Stockfish for development
+RUN apt-get update && apt-get install -y stockfish && rm -rf /var/lib/apt/lists/*
+
 COPY ["Backend.csproj", "./"]
 RUN dotnet restore /p:AllowMissingPrunePackageData=true
 COPY . .
@@ -20,6 +24,10 @@ RUN dotnet publish "Backend.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 # --- Runtime Stage ---
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS production
 WORKDIR /app
+
+# Install Stockfish for production
+RUN apt-get update && apt-get install -y stockfish && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "Backend.dll"]

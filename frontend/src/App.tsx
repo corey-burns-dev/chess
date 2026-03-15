@@ -6,7 +6,6 @@ import { ChessBoard } from "./components/ChessBoard";
 import { MoveList } from "./components/MoveList";
 import { ChessGame, indexToAlgebraic } from "./engine/ChessGame";
 import type { GameMode, AIDifficulty } from "./ai/config";
-import type { StockfishManager } from "./ai/stockfishManager";
 import type {
   ChessState,
   Color,
@@ -436,9 +435,7 @@ function PromotionOverlay({ request, sideToMove, onChoose, onCancel }: Promotion
 
 export default function App() {
   const gameRef = useRef(new ChessGame());
-  const aiManagerRef = useRef<StockfishManager | null>(null);
   const aiRequestTokenRef = useRef(0);
-  const aiPreparedGameRef = useRef<number | null>(null);
   const moveSoundRef = useRef<HTMLAudioElement | null>(null);
   const hubConnectionRef = useRef<signalR.HubConnection | null>(null);
 
@@ -450,7 +447,7 @@ export default function App() {
   const [gameMode, setGameMode] = useState<ExtendedGameMode>("human");
   const [playerColor, setPlayerColor] = useState<Color>("w");
   const [aiThinking, setAiThinking] = useState(false);
-  const [aiReady, setAiReady] = useState(false);
+  const [aiReady] = useState(true);
   const [aiDifficulty, setAiDifficulty] = useState<AIDifficulty>("medium");
   const [aiError, setAiError] = useState<string | null>(null);
 
@@ -574,29 +571,6 @@ export default function App() {
     }
   };
 
-  const cancelAI = (dispose = false) => {
-    aiRequestTokenRef.current += 1;
-    aiManagerRef.current?.stopSearch();
-    setAiThinking(false);
-
-    if (dispose) {
-      aiManagerRef.current?.dispose();
-      aiManagerRef.current = null;
-      aiPreparedGameRef.current = null;
-      setAiReady(false);
-    }
-  };
-
-  const ensureAIManager = async (): Promise<StockfishManager> => {
-    if (!aiManagerRef.current) {
-      const module = await import("./ai/stockfishManager");
-      aiManagerRef.current = new module.StockfishManager();
-      setAiReady(false);
-    }
-
-    return aiManagerRef.current;
-  };
-
   const requestMove = (from: number, to: number) => {
     const candidateMoves = game.getLegalMovesFrom(from).filter((m) => m.to === to);
     if (candidateMoves.length === 0) return false;
@@ -685,37 +659,16 @@ export default function App() {
   useEffect(() => {
     return () => {
       moveSoundRef.current?.pause();
-      aiManagerRef.current?.dispose();
     };
   }, []);
 
   useEffect(() => {
     if (gameMode !== "ai") {
-      cancelAI(true);
+      aiRequestTokenRef.current += 1;
+      setAiThinking(false);
       setAiError(null);
       return;
     }
-
-    let cancelled = false;
-    setAiError(null);
-    setAiReady(false);
-
-    void ensureAIManager()
-      .then((manager) => manager.ensureReady())
-      .then(() => {
-        if (!cancelled) {
-          setAiReady(true);
-        }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          setAiError(errorMessage(error));
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
   }, [gameMode]);
 
   useEffect(() => {
@@ -731,27 +684,31 @@ export default function App() {
 
     void (async () => {
       try {
-        const manager = await ensureAIManager();
+        const settings = AI_DIFFICULTY_SETTINGS[aiDifficulty];
 
-        if (aiPreparedGameRef.current !== gameSession) {
-          await manager.newGame();
-          aiPreparedGameRef.current = gameSession;
-        } else {
-          await manager.ensureReady();
+        const response = await fetch("/api/ai/move", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fen: currentFen,
+            skillLevel: settings.skillLevel,
+            movetimeMs: settings.movetimeMs,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`AI Request failed: ${await response.text()}`);
         }
 
         if (cancelled || aiRequestTokenRef.current !== requestToken) {
           return;
         }
 
-        setAiReady(true);
-
-        const bestMove = await manager.getBestMove(currentFen, aiDifficulty);
-        if (cancelled || aiRequestTokenRef.current !== requestToken) {
-          return;
-        }
-
+        const { bestMove } = await response.json();
         const parsedMove = bestMove ? parseUciMove(bestMove) : null;
+
         if (!parsedMove) {
           throw new Error("AI did not return a legal move.");
         }
@@ -780,7 +737,6 @@ export default function App() {
 
     return () => {
       cancelled = true;
-      aiManagerRef.current?.stopSearch();
     };
   }, [aiDifficulty, currentFen, gameSession, isAiMode, isAiTurn, promotionRequest, status.result]);
 
@@ -839,7 +795,8 @@ export default function App() {
   };
 
   const handleReset = () => {
-    cancelAI();
+    aiRequestTokenRef.current += 1;
+    setAiThinking(false);
     game.reset();
     setGameSession((session) => session + 1);
     clearSelection();
@@ -848,7 +805,8 @@ export default function App() {
 
   const handleUndo = () => {
     if (isMultiplayerMode) return; // Disable undo in multiplayer
-    cancelAI();
+    aiRequestTokenRef.current += 1;
+    setAiThinking(false);
 
     if (!game.undo()) {
       return;
@@ -871,7 +829,8 @@ export default function App() {
       return;
     }
 
-    cancelAI();
+    aiRequestTokenRef.current += 1;
+    setAiThinking(false);
     if (game.claimDraw()) {
       clearSelection();
       refresh();
