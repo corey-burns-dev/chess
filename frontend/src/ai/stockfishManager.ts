@@ -37,6 +37,7 @@ export class StockfishManager {
     }
 
     this.worker = createStockfishWorker();
+    console.log("Stockfish: Worker created. crossOriginIsolated =", window.crossOriginIsolated);
     this.startupMessages = [];
     this.readyPromise = new Promise<void>((resolve, reject) => {
       const readyTimeout = window.setTimeout(() => {
