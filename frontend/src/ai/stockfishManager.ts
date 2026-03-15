@@ -3,7 +3,7 @@ import { createStockfishWorker } from "./stockfishWorker";
 import { parseBestMove } from "./uci";
 import type { AIDifficulty } from "./config";
 
-const READY_TIMEOUT_MS = 10000;
+const READY_TIMEOUT_MS = 30000;
 
 interface PendingReady {
   resolve: () => void;
