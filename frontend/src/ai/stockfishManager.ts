@@ -50,6 +50,7 @@ export class StockfishManager {
       }, READY_TIMEOUT_MS);
 
       const handleWorkerError = (event: ErrorEvent) => {
+        console.error("Stockfish worker error:", event);
         const details =
           this.startupMessages.length > 0
             ? ` Last output: ${this.startupMessages.join(" | ")}`
@@ -60,7 +61,7 @@ export class StockfishManager {
         reject(error);
       };
 
-      this.worker?.addEventListener("error", handleWorkerError, { once: true });
+      this.worker?.addEventListener("error", handleWorkerError);
       this.worker?.addEventListener("message", this.handleWorkerMessage);
 
       this.readyWaiters.push({
@@ -74,8 +75,10 @@ export class StockfishManager {
         },
       });
 
+      console.log("Stockfish: Initializing with 'uci' command...");
       this.send("uci");
     }).catch((error) => {
+      console.error("Stockfish initialization failed:", error);
       this.dispose();
       throw error;
     });
@@ -152,6 +155,7 @@ export class StockfishManager {
 
   private readonly handleWorkerMessage = (event: MessageEvent<string>) => {
     const payload = String(event.data ?? "");
+    console.debug("Stockfish <<", payload);
     const lines = payload
       .split(/\r?\n/)
       .map((line) => line.trim())
@@ -200,6 +204,7 @@ export class StockfishManager {
       throw new Error("Stockfish worker is not available.");
     }
 
+    console.debug("Stockfish >>", command);
     this.worker.postMessage(command);
   }
 
