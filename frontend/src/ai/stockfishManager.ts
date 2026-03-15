@@ -3,7 +3,7 @@ import { createStockfishWorker } from "./stockfishWorker";
 import { parseBestMove } from "./uci";
 import type { AIDifficulty } from "./config";
 
-const READY_TIMEOUT_MS = 30000;
+const READY_TIMEOUT_MS = 60000;
 
 interface PendingReady {
   resolve: () => void;
@@ -51,7 +51,13 @@ export class StockfishManager {
       }, READY_TIMEOUT_MS);
 
       const handleWorkerError = (event: ErrorEvent) => {
-        console.error("Stockfish worker error:", event);
+        console.error("Stockfish worker error:", {
+          message: event.message,
+          filename: event.filename,
+          lineno: event.lineno,
+          colno: event.colno,
+          error: event.error,
+        });
         const details =
           this.startupMessages.length > 0
             ? ` Last output: ${this.startupMessages.join(" | ")}`
@@ -76,10 +82,10 @@ export class StockfishManager {
         },
       });
 
-      console.log("Stockfish: Worker created. Initializing with 'uci' command in 100ms...");
+      console.log("Stockfish: Worker created. Initializing with 'uci' command in 500ms...");
       window.setTimeout(() => {
         this.send("uci");
-      }, 100);
+      }, 500);
     }).catch((error) => {
       console.error("Stockfish initialization failed:", error);
       this.dispose();
