@@ -3,7 +3,7 @@ FROM oven/bun:1.2 AS development
 WORKDIR /app
 COPY package.json bun.lock ./
 ENV BUN_INSTALL_HUSKY=0
-RUN bun install
+RUN bun install --ignore-scripts
 COPY . .
 # Vite's default dev port
 EXPOSE 3000

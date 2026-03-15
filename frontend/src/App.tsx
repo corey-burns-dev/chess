@@ -615,6 +615,8 @@ export default function App() {
 
   // SignalR setup
   useEffect(() => {
+    if (gameMode !== "multiplayer") return;
+
     const connection = new signalR.HubConnectionBuilder()
       .withUrl(`${BACKEND_URL}/gamehub`)
       .withAutomaticReconnect()
@@ -670,8 +672,9 @@ export default function App() {
 
     return () => {
       connection.stop();
+      hubConnectionRef.current = null;
     };
-  }, []);
+  }, [gameMode]);
 
   useEffect(() => {
     return () => {

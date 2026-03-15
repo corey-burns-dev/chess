@@ -14,7 +14,6 @@ CMD ["dotnet", "watch", "run", "--urls", "http://+:8080", "--no-launch-profile"]
 
 # --- Publish Stage ---
 FROM base AS build
-COPY . .
 LABEL org.opencontainers.image.source="https://github.com/burnsco/chess"
 RUN dotnet publish "Backend.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:AllowMissingPrunePackageData=true
 

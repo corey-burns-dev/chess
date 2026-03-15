@@ -23,7 +23,8 @@ public class GameSession
 
 public class GameHub : Hub
 {
-    private static readonly ConcurrentQueue<string> _waitingPlayers = new();
+    private static readonly ConcurrentDictionary<string, byte> _waitingSet = new();
+    private static readonly ConcurrentQueue<string> _waitingQueue = new();
     private static readonly ConcurrentDictionary<string, GameSession> _activeGames = new();
     private static readonly ConcurrentDictionary<string, string> _playerToGameId = new();
 
@@ -31,10 +32,14 @@ public class GameHub : Hub
     {
         var playerId = Context.ConnectionId;
 
-        if (_waitingPlayers.Contains(playerId)) return;
+        if (!_waitingSet.TryAdd(playerId, 0)) return;
 
-        if (_waitingPlayers.TryDequeue(out var opponentId))
+        while (_waitingQueue.TryDequeue(out var opponentId))
         {
+            if (!_waitingSet.TryRemove(opponentId, out _)) continue;
+
+            _waitingSet.TryRemove(playerId, out _);
+
             var gameId = Guid.NewGuid().ToString();
             var session = new GameSession
             {
@@ -52,12 +57,11 @@ public class GameHub : Hub
 
             await Clients.Client(session.WhitePlayerId).SendAsync("GameStarted", gameId, "white");
             await Clients.Client(session.BlackPlayerId).SendAsync("GameStarted", gameId, "black");
+            return;
         }
-        else
-        {
-            _waitingPlayers.Enqueue(playerId);
-            await Clients.Caller.SendAsync("WaitingForOpponent");
-        }
+
+        _waitingQueue.Enqueue(playerId);
+        await Clients.Caller.SendAsync("WaitingForOpponent");
     }
 
     public async Task SendMove(string gameId, string moveStr)
@@ -143,6 +147,10 @@ public class GameHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var playerId = Context.ConnectionId;
+
+        // Remove from waiting set if queued
+        _waitingSet.TryRemove(playerId, out _);
+
         if (_playerToGameId.TryRemove(playerId, out var gameId))
         {
             if (_activeGames.TryRemove(gameId, out var session))
@@ -152,8 +160,6 @@ public class GameHub : Hub
                 await Clients.Client(otherPlayerId).SendAsync("OpponentDisconnected");
             }
         }
-        // Cleanup wait queue
-        // (Simplified for demo)
         await base.OnDisconnectedAsync(exception);
     }
 }

@@ -1,23 +1,24 @@
 {
   "name": "local-chess",
   "version": "0.1.0",
+  "private": true,
   "description": "A high-performance browser-based chess engine and UI built with Vite, React, and TypeScript. Features local multiplayer and Stockfish-powered AI.",
   "keywords": [
-    "chess",
-    "react",
-    "typescript",
-    "vite",
-    "stockfish",
     "ai",
     "browser-game",
-    "local-multiplayer"
+    "chess",
+    "local-multiplayer",
+    "react",
+    "stockfish",
+    "typescript",
+    "vite"
   ],
   "author": "cburns",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
-    "build": "tsc --noEmit && vite build",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview --host 0.0.0.0 --port 3000",
     "test": "vitest run",
     "lint": "oxlint",
@@ -34,14 +35,14 @@
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.2.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "husky": "^9.1.7",
-    "jsdom": "^28.1.0",
+    "jsdom": "^29.0.0",
     "lint-staged": "^16.4.0",
-    "oxfmt": "^0.37.0",
+    "oxfmt": "^0.40.0",
     "oxlint": "^1.55.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1",
+    "vite": "^8.0.0",
     "vitest": "^4.1.0"
   },
   "lint-staged": {

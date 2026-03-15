@@ -22,7 +22,13 @@ services:
       - "5000:8080"
     volumes:
       - ./backend:/app
+      - backend_build:/app/obj
+      - backend_bin:/app/bin
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - DOTNET_USE_POLLING_FILE_WATCHER=1
+
+volumes:
+  backend_build:
+  backend_bin:

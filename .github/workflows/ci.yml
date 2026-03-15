@@ -27,7 +27,7 @@ jobs:
         run: dotnet build chess.slnx --no-restore
 
       - name: Test
-        run: dotnet test Backend.Tests/Backend.Tests.csproj --no-build
+        run: dotnet test chess.slnx --no-build
         
   frontend:
     name: Frontend CI
@@ -46,6 +46,9 @@ jobs:
 
       - name: Lint
         run: cd frontend && bun run lint
+
+      - name: Typecheck
+        run: cd frontend && bun run typecheck
 
       - name: Build
         run: cd frontend && bun run build
@@ -76,6 +79,7 @@ jobs:
           context: ./backend
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/chess-backend:latest
+          target: production
 
       - name: Build and push Frontend
         uses: docker/build-push-action@v5
