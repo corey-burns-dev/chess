@@ -316,6 +316,26 @@ describe("ChessGame engine", () => {
     );
 
     expect(game.getStatus().result?.reason).toBe("insufficient-material");
+
+    const kbb_vs_k_same = new ChessGame(
+      createState({
+        e1: piece("w", "k"),
+        e8: piece("b", "k"),
+        c1: piece("w", "b"),
+        e3: piece("w", "b"), // same color square as c1 (c1 is (7,2), e3 is (5,4). 7+2=9 (light), 5+4=9 (light))
+      }),
+    );
+    expect(kbb_vs_k_same.getStatus().result?.reason).toBe("insufficient-material");
+
+    const kbb_vs_k_diff = new ChessGame(
+      createState({
+        e1: piece("w", "k"),
+        e8: piece("b", "k"),
+        c1: piece("w", "b"),
+        d3: piece("w", "b"), // different color
+      }),
+    );
+    expect(kbb_vs_k_diff.getStatus().result).toBeNull();
   });
 
   it("includes the en passant target square in FEN after a double pawn push", () => {

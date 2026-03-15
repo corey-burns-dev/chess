@@ -12,6 +12,7 @@ public class GameSession
     public ChessGame Game { get; set; } = new ChessGame();
     public bool WhiteWantsRematch { get; set; } = false;
     public bool BlackWantsRematch { get; set; } = false;
+    public SemaphoreSlim Lock { get; } = new(1, 1);
 
     public void Reset()
     {
@@ -33,15 +34,29 @@ public class GameHub : Hub
     
     public async Task RecoverSession(string gameId, string colorStr)
     {
-        var playerId = Context.ConnectionId;
         if (!_activeGames.TryGetValue(gameId, out var session))
         {
-            session = new GameSession { GameId = gameId };
-            _activeGames[gameId] = session;
+            // Game doesn't exist; recovery is not possible for a session that has been purged.
+            return;
         }
 
-        if (colorStr == "white") session.WhitePlayerId = playerId;
-        else if (colorStr == "black") session.BlackPlayerId = playerId;
+        var playerId = Context.ConnectionId;
+
+        // Seat hijacking protection: only allow taking a seat if it's currently empty.
+        if (colorStr == "white")
+        {
+            if (!string.IsNullOrEmpty(session.WhitePlayerId)) return;
+            session.WhitePlayerId = playerId;
+        }
+        else if (colorStr == "black")
+        {
+            if (!string.IsNullOrEmpty(session.BlackPlayerId)) return;
+            session.BlackPlayerId = playerId;
+        }
+        else
+        {
+            return;
+        }
 
         _playerToGameId[playerId] = gameId;
         await Groups.AddToGroupAsync(playerId, gameId);
@@ -97,31 +112,42 @@ public class GameHub : Hub
     {
         if (!_activeGames.TryGetValue(gameId, out var session)) return;
 
-        var playerId = Context.ConnectionId;
-        var playerColor = playerId == session.WhitePlayerId ? Player.White : Player.Black;
-
-        // Validation: Is it the player's turn?
-        if (session.Game.WhoseTurn != playerColor) return;
-
-        // Parse and validate the move (e.g., "e2e4" or "e7e8Q")
-        var move = ParseMove(moveStr, playerColor);
-        if (move == null) return;
-
-        var isValid = session.Game.IsValidMove(move);
-        if (!isValid) return;
-
-        session.Game.MakeMove(move, true);
-
-        // Broadcast validated move to the opponent
-        await Clients.OthersInGroup(gameId).SendAsync("ReceiveMove", moveStr);
-
-        // Check for game over conditions
-        if (session.Game.IsCheckmated(Player.White) || session.Game.IsCheckmated(Player.Black) ||
-            session.Game.IsStalemated(Player.White) || session.Game.IsStalemated(Player.Black))
+        await session.Lock.WaitAsync();
+        try
         {
-            var winner = session.Game.IsCheckmated(Player.Black) ? "white" :
-                         session.Game.IsCheckmated(Player.White) ? "black" : "draw";
-            await Clients.Group(gameId).SendAsync("GameOver", winner);
+            var playerId = Context.ConnectionId;
+            var playerColor = playerId == session.WhitePlayerId ? Player.White : Player.Black;
+
+            // Double check: player must be part of the session
+            if (playerId != session.WhitePlayerId && playerId != session.BlackPlayerId) return;
+
+            // Validation: Is it the player's turn?
+            if (session.Game.WhoseTurn != playerColor) return;
+
+            // Parse and validate the move (e.g., "e2e4" or "e7e8Q")
+            var move = ParseMove(moveStr, playerColor);
+            if (move == null) return;
+
+            var isValid = session.Game.IsValidMove(move);
+            if (!isValid) return;
+
+            session.Game.MakeMove(move, true);
+
+            // Broadcast validated move to the opponent
+            await Clients.OthersInGroup(gameId).SendAsync("ReceiveMove", moveStr);
+
+            // Check for game over conditions
+            if (session.Game.IsCheckmated(Player.White) || session.Game.IsCheckmated(Player.Black) ||
+                session.Game.IsStalemated(Player.White) || session.Game.IsStalemated(Player.Black))
+            {
+                var winner = session.Game.IsCheckmated(Player.Black) ? "white" :
+                             session.Game.IsCheckmated(Player.White) ? "black" : "draw";
+                await Clients.Group(gameId).SendAsync("GameOver", winner);
+            }
+        }
+        finally
+        {
+            session.Lock.Release();
         }
     }
 
@@ -183,14 +209,22 @@ public class GameHub : Hub
         // Clean up any active game
         if (_playerToGameId.TryRemove(playerId, out var gameId))
         {
-            if (_activeGames.TryRemove(gameId, out var session))
+            if (_activeGames.TryGetValue(gameId, out var session))
             {
-                var otherPlayerId = playerId == session.WhitePlayerId
-                    ? session.BlackPlayerId
-                    : session.WhitePlayerId;
+                // Clear the seat for this player so it can be recovered later if needed.
+                if (session.WhitePlayerId == playerId) session.WhitePlayerId = string.Empty;
+                else if (session.BlackPlayerId == playerId) session.BlackPlayerId = string.Empty;
 
-                _playerToGameId.TryRemove(otherPlayerId, out _);
-                await Clients.Client(otherPlayerId).SendAsync("OpponentDisconnected");
+                // If both players are gone, remove the session entirely.
+                if (string.IsNullOrEmpty(session.WhitePlayerId) && string.IsNullOrEmpty(session.BlackPlayerId))
+                {
+                    _activeGames.TryRemove(gameId, out _);
+                }
+                else
+                {
+                    // Notify the other player that their opponent has disconnected.
+                    await Clients.OthersInGroup(gameId).SendAsync("OpponentDisconnected");
+                }
             }
         }
 
